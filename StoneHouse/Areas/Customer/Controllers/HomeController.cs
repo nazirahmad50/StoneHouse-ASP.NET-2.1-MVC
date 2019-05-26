@@ -8,6 +8,8 @@ using StoneHouse.Models;
 
 namespace StoneHouse.Controllers
 {
+    //identity that this controller resides in the area called Customer
+    [Area("Customer")]
     public class HomeController : Controller
     {
         public IActionResult Index()

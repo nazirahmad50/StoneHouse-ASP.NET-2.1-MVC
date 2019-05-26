@@ -67,7 +67,8 @@ namespace StoneHouse
             {
                 routes.MapRoute(
                   name: "areas",
-                  template: "{area:Customer}/{controller=Home}/{action=Index}/{id?}"
+                  //The default area is the 'Customer' area
+                  template: "{area=Customer}/{controller=Home}/{action=Index}/{id?}"
                 );
             });
         }
