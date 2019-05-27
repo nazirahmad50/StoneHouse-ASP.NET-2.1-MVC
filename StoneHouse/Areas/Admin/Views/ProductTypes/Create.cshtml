@@ -1,0 +1,44 @@
+﻿@model StoneHouse.Models.ProductTypes
+@{
+    ViewData["Title"] = "Create";
+}
+
+<br />
+
+<h2 class="text-info">Create Product Type</h2>
+
+
+<!--The asp-action is not required becasue the post method will by default post to the name of this view
+    This only works if you are trying to make an action Create as both this view and teh action names will be the same-->
+<form method="post" asp-action="Create">
+    <div class="p-4 border rounded">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Name"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <br />
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Create" />
+            <a asp-action="Index" class="btn btn-success">Back To List</a>
+        </div>
+
+    </div> 
+
+
+
+</form>
+
+<!--Call the validationscript view which is outside of the area
+    All the javascripts for the 'asp-validation-summary' is included in here-->
+@section Scripts{ 
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,35 @@
+﻿@model StoneHouse.Models.ProductTypes
+@{
+    ViewData["Title"] = "Details";
+}
+
+<br />
+
+<h2 class="text-info">Product Type Details</h2>
+
+
+<!--The asp-action is not required becasue the post method will by default post to the name of this view
+    This only works if you are trying to make an action Create as both this view and teh action names will be the same-->
+    <div class="p-4 border rounded">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Name"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Name" disabled class="form-control" />
+            </div>
+        </div>
+        <br />
+
+        <div class="form-group">
+            <!--The 'asp-route-id', the id in this tag  has to be the same as the parameter name id in its action method
+                The value for this will be retrieved from its action method parameter-->
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Index" class="btn btn-success">Back To List</a>
+        </div>
+
+    </div>
+

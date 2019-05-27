@@ -1,0 +1,36 @@
+﻿@model StoneHouse.Models.ProductTypes
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<br />
+
+<h2 class="text-info">Delete Product Type</h2>
+
+
+<!--The asp-action is not required becasue the post method will by default post to the name of this view
+    This only works if you are trying to make an action Create as both this view and teh action names will be the same-->
+<form method="post" asp-action="Delete">
+    <div class="p-4 border rounded">
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Name"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Name" disabled class="form-control" />
+            </div>
+        </div>
+        <br />
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-danger" asp-route-id="@Model.Id" value="Delete" />
+            <a asp-action="Index" class="btn btn-success">Back To List</a>
+        </div>
+
+    </div>
+
+
+
+</form>
+
