@@ -18,6 +18,8 @@ namespace StoneHouse.Data
         //Create dataset for the 'ProductTypes' Model 
         public DbSet<ProductTypes> ProductTypes { get; set; }
         public DbSet<SpecialTags> SpecialTags { get; set; }
+        public DbSet<Products> Products { get; set; }
+
 
     }
 }
