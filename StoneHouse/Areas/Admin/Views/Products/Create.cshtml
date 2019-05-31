@@ -1,0 +1,107 @@
+﻿@model StoneHouse.Models.ViewModel.ProductsViewModel
+<!--Add the extension-->
+@using StoneHouse.Extensions
+@{
+    ViewData["Title"] = "Create";
+}
+
+<br />
+
+<h2 class="text-info">Create Product</h2>
+
+
+<!--The asp-action is not required becasue the post method will by default post to the name of this view
+    This only works if you are trying to make an action Create as both this view and teh action names will be the same-->
+<!--The enctype is used because of images -->
+<form method="post" enctype="multipart/form-data">
+    <div class="p-4 border rounded">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Products.Name"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Products.Name" class="form-control" />
+            </div>
+            <span asp-validation-for="Products.Name" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Products.Price"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Products.Price" class="form-control" />
+            </div>
+            <span asp-validation-for="Products.Price" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Products.Image"></label>
+            </div>
+            <div class="col-5">
+                <input type="file" name="files" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="ProductTypes"></label>
+            </div>
+            <div class="col-5">
+                <select asp-for="@Model.Products.ProductTypeId" asp-items="Model.ProductTypes.ToSelectListItem(Model.Products.ProductTypeId)" class="form-control"></select>
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="SpecialTags"></label>
+            </div>
+            <div class="col-5">
+                <select asp-for="@Model.Products.SpecialTagId" asp-items="Model.SpecialTags.ToSelectListItem(Model.Products.SpecialTagId)" class="form-control"></select>
+
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Products.ShadeColor"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Products.ShadeColor" class="form-control" />
+            </div>
+            <span asp-validation-for="Products.ShadeColor" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                <label asp-for="Products.Available"></label>
+            </div>
+            <div class="col-5">
+                <input type="checkbox" asp-for="Products.Available"  />
+            </div>
+        </div>
+
+        <br />
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Create" />
+            <a asp-action="Index" class="btn btn-success">Back To List</a>
+        </div>
+
+    </div>
+
+
+
+</form>
+
+<!--Call the validationscript view which is outside of the area
+    All the javascripts for the 'asp-validation-summary' is included in here-->
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
