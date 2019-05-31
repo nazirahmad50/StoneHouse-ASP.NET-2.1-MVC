@@ -263,6 +263,70 @@ namespace StoneHouse.Controllers
 
         }
 
+        //GET: Delete
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null)
+            {
+                ProductsVM.Products = await _db.Products.Include(m => m.SpecialTags).Include(m => m.ProductTypes).SingleOrDefaultAsync(m => m.Id == id);
+
+                if (ProductsVM.Products != null)
+                {
+                    return View(ProductsVM);
+
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+
+
+            }
+            else
+            {
+                return NotFound();
+
+            }
+
+        }
+
+        //Post: Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            string webRootPath = _HostingEnvironment.WebRootPath;
+            Products products = await _db.Products.FindAsync(id);
+
+            if (products!= null)
+            {
+
+                //retrieve the folder where the image has been upladoed or where it already exists
+                var uplaods = Path.Combine(webRootPath, StaticDetails.ImageFolder);
+                var extension = Path.GetExtension(products.Image);
+
+                //check if the file exists
+                //by combining teh file name and the extension which gives the filename
+                if (System.IO.File.Exists(Path.Combine(uplaods, products.Id + extension)))
+                {
+                    System.IO.File.Delete(Path.Combine(uplaods, products.Id + extension));
+                        
+                }
+
+                _db.Products.Remove(products);
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+
+            }
+            else
+            {
+                return NotFound();
+            }
+
+
+        }
+
 
 
     }
