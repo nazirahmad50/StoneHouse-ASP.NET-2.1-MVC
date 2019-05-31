@@ -235,7 +235,33 @@ namespace StoneHouse.Controllers
         }
 
 
+        //GET: Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id != null)
+            {
+                ProductsVM.Products = await _db.Products.Include(m => m.SpecialTags).Include(m => m.ProductTypes).SingleOrDefaultAsync(m => m.Id == id);
 
+                if (ProductsVM.Products != null)
+                {
+                    return View(ProductsVM);
+
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+
+
+            }
+            else
+            {
+                return NotFound();
+
+            }
+
+        }
 
 
 
