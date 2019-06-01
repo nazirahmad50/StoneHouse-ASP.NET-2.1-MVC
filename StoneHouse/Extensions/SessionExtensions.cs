@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace StoneHouse.Extensions
 {
+    //This class was used from microsoft documentation 
     public static class SessionExtensions
     {
         public static void Set<T>(this ISession session, string key, T value)
