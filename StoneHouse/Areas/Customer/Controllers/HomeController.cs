@@ -68,6 +68,28 @@ namespace StoneHouse.Controllers
 
         }
 
+        //remove based on the id because we are passing the id in the 'asp-roud-id' in the details view
+        public IActionResult Remove(int id)
+        {
+            List<int> lstShoppingCart = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+
+            if (lstShoppingCart.Count > 0)
+            {
+                if (lstShoppingCart.Contains(id))
+                {
+                    lstShoppingCart.Remove(id);
+                }
+            }
+
+            //need to set teh session again
+            HttpContext.Session.Set("ssShoppingCart", lstShoppingCart);
+
+            return RedirectToAction(nameof(Index));
+
+
+
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
