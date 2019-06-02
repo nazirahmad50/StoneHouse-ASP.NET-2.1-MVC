@@ -49,5 +49,71 @@ namespace StoneHouse.Areas.Customer.Controllers
 
             return View(ShoppingCartVM);
         }
+
+
+        [HttpPost, ActionName("Index")]
+        [ValidateAntiForgeryToken]
+        public IActionResult IndexPost()
+        {
+            //retireve the list of items displayed in the shopping cart
+            List<int> lstCartItems = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+
+            //Merge both the appointment date and time inside the AppointmentDate
+            ShoppingCartVM.Appointments.AppointmentDate = ShoppingCartVM.Appointments.AppointmentDate
+                                                            .AddHours(ShoppingCartVM.Appointments.AppointmentTime.Hour)
+                                                            .AddHours(ShoppingCartVM.Appointments.AppointmentTime.Minute);
+
+            //create Appointments and add it to the database
+            Appointments appointments = ShoppingCartVM.Appointments;
+            _db.Appointments.Add(appointments);
+            _db.SaveChanges();
+
+            //get the appoappointments id
+            int appointmentId = appointments.Id;
+
+            //loop through teh items in teh cart
+            foreach(int productId in lstCartItems)
+            {
+                //create an object of 'ProductsSelectedForAppointment' each time
+                ProductsSelectedForAppointment ProductsSelectedForAppointment = new ProductsSelectedForAppointment()
+                {
+                    AppointmentId = appointmentId,
+                    ProductId = productId
+                };
+                //add it to the database 
+                _db.ProductsSelectedForAppointment.Add(ProductsSelectedForAppointment);
+            }
+            //after the loop is finished save changes to databse
+            _db.SaveChanges();
+
+            //empty the list 'lstCartItems'
+            lstCartItems = new List<int>();
+            //set the session so it can be emptied
+            HttpContext.Session.Set("ssShoppingCart", lstCartItems);
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        public IActionResult Remove(int id)
+        {
+            //retireve the list of items displayed in the shopping cart
+            List<int> lstCartItems = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+
+            if (lstCartItems.Count > 0)
+            {
+                if (lstCartItems.Contains(id))
+                {
+                    lstCartItems.Remove(id);
+                }
+            }
+
+            //set the session so it can be empty
+            HttpContext.Session.Set("ssShoppingCart", lstCartItems);
+            return RedirectToAction(nameof(Index));
+
+        }
+
+
     }
 }
