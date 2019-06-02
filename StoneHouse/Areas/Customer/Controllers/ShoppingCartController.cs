@@ -91,7 +91,8 @@ namespace StoneHouse.Areas.Customer.Controllers
             //set the session so it can be emptied
             HttpContext.Session.Set("ssShoppingCart", lstCartItems);
 
-            return RedirectToAction(nameof(Index));
+            //redirect to 'AppointmentConfirmation' method and pass the appointmentId as the id parameter 
+            return RedirectToAction("AppointmentConfirmation", "ShoppingCart", new { Id = appointmentId});
 
         }
 
@@ -113,6 +114,25 @@ namespace StoneHouse.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+
+        public IActionResult AppointmentConfirmation(int id)
+        {
+            ShoppingCartVM.Appointments = _db.Appointments.Where(a => a.Id == id).FirstOrDefault();
+
+            //get all the products selected for appointment by the id 
+            List<ProductsSelectedForAppointment> objProductLst = _db.ProductsSelectedForAppointment.Where(p => p.AppointmentId == id).ToList();
+
+            foreach (ProductsSelectedForAppointment productA in objProductLst) 
+            {
+                //addl all  products inside 'ProductsSelectedForAppointment' to the ShoppingCartVM
+                ShoppingCartVM.Products.Add(_db.Products.Include(p=>p.ProductTypes).Include(p => p.SpecialTags).Where(p=>p.Id == productA.ProductId).FirstOrDefault());
+
+            }
+
+            return View(ShoppingCartVM);
+
+        }
+
 
 
     }
