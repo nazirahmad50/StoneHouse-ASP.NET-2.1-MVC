@@ -27,6 +27,7 @@ namespace StoneHouse.Controllers
         {
             var productList = await _db.Products.Include(m => m.ProductTypes).Include(m => m.SpecialTags).ToListAsync();
 
+
             return View(productList);
         }
 
@@ -40,7 +41,7 @@ namespace StoneHouse.Controllers
 
         [HttpPost, ActionName("Details")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DetailsPost(int id)
+        public  IActionResult DetailsPost(int id)
         {
             //'ssShoppingCart' is used to identify the session
             //The 'Get' is used from the 'SessionExtensions' class which includes a Get and a Set
@@ -56,6 +57,7 @@ namespace StoneHouse.Controllers
             //setting the session 
             //add the id to the list
             lstShoppingCart.Add(id);
+            System.Diagnostics.Debug.WriteLine("errd" + lstShoppingCart);
 
             //The 'Set' is used from the 'SessionExtensions' class which includes a Get and a Set
             //pass the value(lstShoppingCart) to the session 'ssShoppingCart'  
