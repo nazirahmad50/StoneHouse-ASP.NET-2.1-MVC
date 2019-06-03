@@ -14,7 +14,8 @@ using StoneHouse.Utility;
 
 namespace StoneHouse.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    //only super admin is able to view the register page and be able to register users
+    [Authorize(Roles = StaticDetails.SuperAdminEndUser)]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;

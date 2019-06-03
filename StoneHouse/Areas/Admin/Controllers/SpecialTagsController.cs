@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoneHouse.Data;
 using StoneHouse.Models;
+using StoneHouse.Utility;
 
 namespace StoneHouse.Areas.Admin.Controllers
 {
+    //set authorization as only the role SuperAdminEndUser will be able to access these controllers or views
+    [Authorize(Roles = StaticDetails.SuperAdminEndUser)]
     [Area("Admin")]
     public class SpecialTagsController : Controller
     {
