@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using StoneHouse.Models;
+using StoneHouse.Utility;
 
 namespace StoneHouse.Areas.Identity.Pages.Account
 {
@@ -75,21 +77,56 @@ namespace StoneHouse.Areas.Identity.Pages.Account
 
 
 
-
+        //this is the GET handler which is similar to the get method in MVC
         public void OnGet(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
         }
 
+        //this is the POST handler which is similar to the POST method in MVC
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, Name = Input.Name, PhoneNumber = Input.PhoneNumber};
+                //creates a new user inside the database
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+
+
+                    //if the admin end user does not exist
+                    if (!await _roleManager.RoleExistsAsync(StaticDetails.AdminEndUser))
+                    {
+                        //create new admin end user role
+                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.AdminEndUser));
+
+                    }
+
+
+                    //if the super admin end user does not exist
+                    if (!await _roleManager.RoleExistsAsync(StaticDetails.SuperAdminEndUser))
+                    {
+                        //create new super admin end user role
+                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.SuperAdminEndUser));
+
+                    }
+
+                    //if the 'isSuperAdmin' check box is selected
+                    if (Input.isSuperAdmin)
+                    {
+                        //then create SuperAdminEndUser user
+                        await _userManager.AddToRoleAsync(user, StaticDetails.SuperAdminEndUser);
+                    }
+                    else
+                    {
+                        //then create AdminEndUser user
+                        await _userManager.AddToRoleAsync(user, StaticDetails.AdminEndUser);
+                    }
+
+
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
