@@ -38,7 +38,7 @@
                 <!--Show the Home controller in the Customer Area as default-->
                 <li class="nav-item"><a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a></li>
 
-                <!--Show these options when a super admin logs in-->
+                <!--Show these options (header tabs) when a super admin logs in-->
                 @if (User.IsInRole(StaticDetails.SuperAdminEndUser))
                 {
                     <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="ProductTypes" asp-action="Index">Product Types</a></li>
@@ -46,41 +46,45 @@
                     <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="AdminUsers" asp-action="Index">Admin Users</a></li>
                 }
-
-                <!--Check if there is soem values inside the shopping cart -->
-                @if (HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart") != null)
+                <!--Show these options(header tab) to only the super admin and admin users-->
+                @if (User.IsInRole(StaticDetails.SuperAdminEndUser) || User.IsInRole(StaticDetails.AdminEndUser))
                 {
-                    <li style="color:white">
-                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
-                            <i class="fas fa-shopping-cart"></i> &nbsp;
-
-                            @{
-                                //retrieve the number of items inside the shopping cart
-                                var count = HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart").Count;
-
-                            }
-                            (@count)
-
-                        </a>
-
-                    </li>
-
+                    <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Appointments" asp-action="Index">Appointments</a></li>
                 }
-                else
-                {
-                    <li style="color:white">
-                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
-                            <i class="fas fa-shopping-cart"></i> &nbsp;
+                    <!--Check if there is soem values inside the shopping cart -->
+                    @if (HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart") != null)
+                    {
+                        <li style="color:white">
+                            <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
+                                <i class="fas fa-shopping-cart"></i> &nbsp;
+
+                                @{
+                                    //retrieve the number of items inside the shopping cart
+                                    var count = HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart").Count;
+
+                                }
+                                (@count)
+
+                            </a>
+
+                        </li>
+
+                    }
+                    else
+                    {
+                        <li style="color:white">
+                            <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
+                                <i class="fas fa-shopping-cart"></i> &nbsp;
 
 
-                            (0)
+                                (0)
 
-                        </a>
+                            </a>
 
-                    </li>
-                }
+                        </li>
+                    }
 
-            </ul>
+                </ul>
            
         </div>
 
