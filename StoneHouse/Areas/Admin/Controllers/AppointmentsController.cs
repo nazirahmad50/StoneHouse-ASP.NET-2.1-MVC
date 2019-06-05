@@ -24,7 +24,8 @@ namespace StoneHouse.Areas.Admin.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Index()
+        //receieve this parameters if the user eneters it in the view
+        public async Task<IActionResult> Index(string searchName=null, string searchEmail=null, string searchPhone=null, string searchDate=null)
         {
             //identityfy the current user that is logged in
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
@@ -55,6 +56,40 @@ namespace StoneHouse.Areas.Admin.Controllers
                 //the 'claim.Value' is the current user logged in id
                 appointmentVM.Appointments = appointmentVM.Appointments.Where(a => a.SalesPersonId == claim.Value).ToList();
             }
+
+            //--------------------------------------
+            //Search functionality
+            //--------------------------------------
+
+            if (searchName!= null)
+            {
+                appointmentVM.Appointments = appointmentVM.Appointments.Where(a => a.CustomerName.ToLower().Contains(searchName.ToLower())).ToList();
+            }
+            if (searchEmail != null)
+            {
+                appointmentVM.Appointments = appointmentVM.Appointments.Where(a => a.CustomerEmail.ToLower().Contains(searchEmail.ToLower())).ToList();
+            }
+            if (searchPhone != null)
+            {
+                appointmentVM.Appointments = appointmentVM.Appointments.Where(a => a.CustomerPhone.ToLower().Contains(searchPhone.ToLower())).ToList();
+            }
+            if (searchDate != null)
+            {
+                //try to convert this string into an integer
+                try
+                {
+                    DateTime appDate = Convert.ToDateTime(searchDate);
+
+                    appointmentVM.Appointments = appointmentVM.Appointments.Where(a => a.AppointmentDate.ToShortDateString().Equals(appDate.ToShortDateString())).ToList();
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+            }
+
 
             return View(appointmentVM);
         }
