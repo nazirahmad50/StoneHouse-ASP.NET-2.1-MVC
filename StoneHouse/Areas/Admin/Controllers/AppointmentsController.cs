@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StoneHouse.Data;
+using StoneHouse.Models;
 using StoneHouse.Models.ViewModel;
 using StoneHouse.Utility;
 
@@ -25,7 +26,7 @@ namespace StoneHouse.Areas.Admin.Controllers
         }
 
         //receieve this parameters if the user eneters it in the view
-        public async Task<IActionResult> Index(string searchName=null, string searchEmail=null, string searchPhone=null, string searchDate=null)
+        public IActionResult Index(string searchName=null, string searchEmail=null, string searchPhone=null, string searchDate=null)
         {
             //identityfy the current user that is logged in
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
@@ -93,5 +94,81 @@ namespace StoneHouse.Areas.Admin.Controllers
 
             return View(appointmentVM);
         }
+
+        //GET:Edit
+        public IActionResult Edit(int? id)
+        {
+            if (id != null)
+            {
+
+                //retrieve list of products
+                //join products and ProductsSelectedForAppointment on where their id is equal
+                //filter based on where (where) the appointment id is equal to the products id
+                //select all the products which is p
+                //aslo include the product types
+                var productLst = (IEnumerable<Products>)(from p in _db.Products
+                                                       join a in _db.ProductsSelectedForAppointment
+                                                       on p.Id equals a.ProductId
+                                                       where a.AppointmentId == id
+                                                       select p).Include("ProductTypes");
+
+                AppointmentDetailViewModel objAppointmentVM = new AppointmentDetailViewModel()
+                {
+                    Appointments = _db.Appointments.Include(a => a.SalesPerson).Where(a => a.Id == id).FirstOrDefault(),
+                    SalesPerson = _db.ApplicationUser.ToList(),
+                    Products = productLst.ToList()
+
+                };
+
+            return View(objAppointmentVM);
+
+
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public  IActionResult Edit(int id, AppointmentDetailViewModel objAppointmentVM)
+        {
+            if (ModelState.IsValid)
+            {
+                //add appointment hours and minutes to the AppointmentDate
+                objAppointmentVM.Appointments.AppointmentDate = objAppointmentVM.Appointments.AppointmentDate
+                                                                   .AddHours(objAppointmentVM.Appointments.AppointmentTime.Hour)
+                                                                   .AddMinutes(objAppointmentVM.Appointments.AppointmentTime.Minute);
+
+                //load appointments from database based on the appointment id inside the appointment View Model
+                var appointmentFromDB = _db.Appointments.Where(a => a.Id == objAppointmentVM.Appointments.Id).FirstOrDefault();
+
+                //update the appoitnments database fields to changes made in the objAppointmentVM which are from the view
+                appointmentFromDB.CustomerName = objAppointmentVM.Appointments.CustomerName;
+                appointmentFromDB.CustomerEmail = objAppointmentVM.Appointments.CustomerEmail;
+                appointmentFromDB.CustomerPhone = objAppointmentVM.Appointments.CustomerPhone;
+                appointmentFromDB.AppointmentDate = objAppointmentVM.Appointments.AppointmentDate;
+                appointmentFromDB.isConfirmed = objAppointmentVM.Appointments.isConfirmed;
+
+                //only the super admin can update the salesperson or assign them
+                if (User.IsInRole(StaticDetails.SuperAdminEndUser))
+                {
+                    appointmentFromDB.SalesPersonId = objAppointmentVM.Appointments.SalesPersonId;
+                }
+
+                _db.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+
+            }
+            else
+            {
+                return View(objAppointmentVM);
+
+
+            }
+        }
+
     }
 }

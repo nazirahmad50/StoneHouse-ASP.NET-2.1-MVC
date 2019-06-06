@@ -26,5 +26,26 @@ namespace StoneHouse.Extensions
 
                    };
         }
+    
+
+    public static IEnumerable<SelectListItem> ToSelectListItemString<T>(this IEnumerable<T> items, string selectedValue)
+    {
+        if (selectedValue == null)
+        {
+            selectedValue = "";
+        }
+
+        //pass the collection of IEnumerable item called 'items'
+        //adn use link to iterate and convert it into 'SelectListItem'
+        return from item in items
+               select new SelectListItem
+               {
+                   Text = item.GetPropertyValue("Name"),
+                   Value = item.GetPropertyValue("Id"),
+                   Selected = item.GetPropertyValue("Id").Equals(selectedValue.ToString())
+
+               };
     }
 }
+}
+
