@@ -206,5 +206,51 @@ namespace StoneHouse.Areas.Admin.Controllers
                 return NotFound();
             }
         }
+
+        //GET:Delete
+        public IActionResult Delete(int? id)
+        {
+            if (id != null)
+            {
+
+                //retrieve list of products
+                //join products and ProductsSelectedForAppointment on where their id is equal
+                //filter based on where (where) the appointment id is equal to the products id
+                //select all the products which is p
+                //aslo include the product types
+                var productLst = (IEnumerable<Products>)(from p in _db.Products
+                                                         join a in _db.ProductsSelectedForAppointment
+                                                         on p.Id equals a.ProductId
+                                                         where a.AppointmentId == id
+                                                         select p).Include("ProductTypes");
+
+                AppointmentDetailViewModel objAppointmentVM = new AppointmentDetailViewModel()
+                {
+                    Appointments = _db.Appointments.Include(a => a.SalesPerson).Where(a => a.Id == id).FirstOrDefault(),
+                    SalesPerson = _db.ApplicationUser.ToList(),
+                    Products = productLst.ToList()
+
+                };
+
+                return View(objAppointmentVM);
+
+
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        //POST:Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAppointment(int? id)
+        {
+            var appointment = await _db.Appointments.FindAsync(id);
+            _db.Appointments.Remove(appointment);
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

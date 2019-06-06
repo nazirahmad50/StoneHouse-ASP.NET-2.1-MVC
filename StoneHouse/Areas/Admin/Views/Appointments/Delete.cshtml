@@ -1,0 +1,160 @@
+﻿@model StoneHouse.Models.ViewModel.AppointmentDetailViewModel
+<!--Add the extension-->
+@using StoneHouse.Extensions
+@using StoneHouse.Utility
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<br />
+
+<h2 class="text-info">Delete Appointment</h2>
+
+
+
+<form method="post" >
+    <div class="p-4 border rounded row">
+        <input hidden asp-for="Appointments.Id" />
+
+        <div class="col-6">
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.CustomerName"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Appointments.CustomerName" readonly class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.CustomerEmail"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Appointments.CustomerEmail" readonly class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.AppointmentDate"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Appointments.AppointmentDate" readonly id="datepicker" type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.AppointmentTime"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Appointments.AppointmentTime" readonly id="timepicker" type="text" class="timepicker form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.CustomerPhone"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Appointments.CustomerPhone" readonly class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.SalesPerson"></label>
+                </div>
+                <div class="col-8">
+                    @if (User.IsInRole(StaticDetails.AdminEndUser))
+                    {
+                        <input asp-for="@Model.Appointments.SalesPerson.Name" readonly class="form-control" />
+                        <input asp-for="@Model.Appointments.SalesPersonId" hidden />
+                    }
+                    else
+                    {
+                        <select asp-for="@Model.Appointments.SalesPersonId" disabled asp-items="@Model.SalesPerson.ToSelectListItemString(Model.Appointments.SalesPersonId)" class="form-control"></select>
+                    }
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <!--The 'asp-for' will automatically bind this Name to the ProductTypes model property called Name -->
+                    <label asp-for="Appointments.isConfirmed"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Appointments.isConfirmed" readonly class="form-control" />
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-6">
+            <!--Display the products on the right-->
+            <partial name="~/Views/Shared/_AppointmentProductDetails.cshtml" model="Model.Products" />
+        </div>
+
+
+
+        <br />
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-danger" asp-route-id="@Model.Appointments.Id" value="Delete" />
+            <a asp-action="Index" class="btn btn-success">Back To List</a>
+        </div>
+
+    </div>
+
+
+
+</form>
+
+
+@section Scripts{
+
+
+    <script>
+
+            $(document).ready(function () {
+
+                //get whatever value is inside the appointment time
+                var appointmentTime = document.getElementById('datepicker').value;
+                //create empty splitData var
+                var splitData = "";
+
+                //if the first space in the appointmentTime is greater than 0
+                if (appointmentTime.indexOf(" ") > 0) {
+
+                    //split appointmentTime base don space and set it to splitData
+                    splitData = appointmentTime.split(" ");
+
+                 //else split based on 'T'
+                //becasue some browser displays T instead of space
+                } else {
+                    splitData = appointmentTime.split("T");
+                }
+
+                var time = splitData[1].substring(0, 5);
+
+                //sometimes it will sneak in another colomn at the end of time
+
+                if (time.slice(-1) == ":") {
+                    //so the last character of the time will be removed which can be a columns sometimes
+                    time = time.substring(0, time.length - 1);
+                }
+
+                var amPmTime = splitData[2];
+
+                $("#datepicker").attr("value", splitData[0]);
+                $("#timepicker").attr("value", time + ' ' + amPmTime);
+
+            })
+
+    </script>
+
+
+}
+
