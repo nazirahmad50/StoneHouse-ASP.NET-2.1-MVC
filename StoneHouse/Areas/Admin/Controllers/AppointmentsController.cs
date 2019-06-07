@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,17 @@ namespace StoneHouse.Areas.Admin.Controllers
     { 
         private readonly ApplicationDbContext _db;
 
+        //display 3 appointments per page
+        private int pageSize = 3;
+
         public AppointmentsController(ApplicationDbContext db)
         {
             _db = db;
         }
 
         //receieve this parameters if the user eneters it in the view
-        public IActionResult Index(string searchName=null, string searchEmail=null, string searchPhone=null, string searchDate=null)
+        //productPage will be set to 1 by default
+        public IActionResult Index(int productPage=1, string searchName=null, string searchEmail=null, string searchPhone=null, string searchDate=null)
         {
             //identityfy the current user that is logged in
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
@@ -43,6 +48,41 @@ namespace StoneHouse.Areas.Admin.Controllers
                 //to the list of the Appointments model
                 Appointments = new List<Models.Appointments>()
             };
+
+            //-------------------------
+            //Pagination: build url
+            //-------------------------
+
+            StringBuilder param = new StringBuilder();
+
+            //need to make sure that whatever parameter is passed for teh search criteria still remains in the other pages
+            //the ':' will be replaced with the page number which is done in the PageLinkTagHelper
+            param.Append("/Admi/Appointments?productPage=:");
+
+            param.Append("&searchName");
+            if (searchName!= null)
+            {
+                param.Append(searchName);
+            }
+            param.Append("&searchEmail");
+            if (searchName != null)
+            {
+                param.Append(searchEmail);
+            }
+
+            param.Append("&searchPhone");
+            if (searchName != null)
+            {
+                param.Append(searchPhone);
+            }
+               param.Append("&searchDate");
+            if (searchName != null)
+            {
+                param.Append(searchDate);
+            }
+
+
+
 
             //populate the virtual applicaiton user (SalesPerson) in the Appointments model class 
             //with application users from the database based on the 'salesPersonId'
@@ -91,6 +131,24 @@ namespace StoneHouse.Areas.Admin.Controllers
 
             }
 
+            //count how many appoitnments we have after the search criteria
+            var count = appointmentVM.Appointments.Count;
+
+            /* for e.g. there is 5 total appoitnemtns and the page size is 3
+            So the count variable will be five
+            and say the productPage(current page) is 1 then -1 it will be 0, multiply by 3 it will then 'Skip' 0 and 'Take' first 3 (pageSize)
+             */
+            appointmentVM.Appointments = appointmentVM.Appointments.OrderBy(p => p.AppointmentDate)
+                .Skip((productPage - 1) * pageSize)
+                .Take(pageSize).ToList();
+
+            appointmentVM.PagingInfo = new PagingInfo
+            {
+                CurrentPage = productPage,
+                ItemsPerPage = pageSize,
+                TotalItems = count,
+                urlParam = param.ToString()
+            };
 
             return View(appointmentVM);
         }
@@ -254,3 +312,4 @@ namespace StoneHouse.Areas.Admin.Controllers
         }
     }
 }
+ 

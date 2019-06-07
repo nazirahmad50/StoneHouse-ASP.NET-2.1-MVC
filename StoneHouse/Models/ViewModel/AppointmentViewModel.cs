@@ -8,5 +8,10 @@ namespace StoneHouse.Models.ViewModel
     public class AppointmentViewModel
     {
         public List<Appointments> Appointments { get; set; }
+
+        //need the 'PagingInfo' for pagination
+        public PagingInfo PagingInfo { get; set; }
+
+
     }
 }
