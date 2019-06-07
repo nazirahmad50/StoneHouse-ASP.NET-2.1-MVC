@@ -57,7 +57,7 @@ namespace StoneHouse.Areas.Admin.Controllers
 
             //need to make sure that whatever parameter is passed for teh search criteria still remains in the other pages
             //the ':' will be replaced with the page number which is done in the PageLinkTagHelper
-            param.Append("/Admi/Appointments?productPage=:");
+            param.Append("/Admin/Appointments?productPage=:");
 
             param.Append("&searchName");
             if (searchName!= null)
@@ -65,18 +65,18 @@ namespace StoneHouse.Areas.Admin.Controllers
                 param.Append(searchName);
             }
             param.Append("&searchEmail");
-            if (searchName != null)
+            if (searchEmail != null)
             {
                 param.Append(searchEmail);
             }
 
             param.Append("&searchPhone");
-            if (searchName != null)
+            if (searchPhone != null)
             {
                 param.Append(searchPhone);
             }
                param.Append("&searchDate");
-            if (searchName != null)
+            if (searchDate != null)
             {
                 param.Append(searchDate);
             }
@@ -130,6 +130,10 @@ namespace StoneHouse.Areas.Admin.Controllers
                 }
 
             }
+
+            //-------------------------
+            //Pagination
+            //-------------------------
 
             //count how many appoitnments we have after the search criteria
             var count = appointmentVM.Appointments.Count;

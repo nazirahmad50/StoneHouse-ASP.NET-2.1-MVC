@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 
 namespace StoneHouse.TagHelpers
 {
+    //in this class custom tag helper will be created
+
     //the 'PageLinkTagHelper' will be assigned inside a div tag inside a view
-    //and add an attribute of page-model
+    //and add an attribute of page-model which will be the 'PaginInfo' in the view
     [HtmlTargetElement("div", Attributes ="page-model")]
     public class PageLinkTagHelper : TagHelper
     {
@@ -33,6 +35,7 @@ namespace StoneHouse.TagHelpers
         //object of PagingInfo
         public PagingInfo PageModel { get; set; }
 
+        //create propertie that will be set in the Apopointments controller and used in the Index View as well
         public string PageAction { get; set; }
         public bool PageClassesEnabled { get; set; }
         public string PageClass { get; set; }
@@ -56,7 +59,7 @@ namespace StoneHouse.TagHelpers
                 if (PageClassesEnabled)
                 {
                     tag.AddCssClass(PageClass);
-                    tag.AddCssClass(i == PageModel.CurrentPage ? PageClassSelected : PageClassNormal);
+                    tag.AddCssClass(i == PageModel.CurrentPage? PageClassSelected : PageClassNormal);
 
                 }
                 tag.InnerHtml.Append(i.ToString());
