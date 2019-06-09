@@ -97,23 +97,6 @@ namespace StoneHouse.Areas.Identity.Pages.Account
                 {
 
 
-                    //if the admin end user does not exist
-                    if (!await _roleManager.RoleExistsAsync(StaticDetails.AdminEndUser))
-                    {
-                        //create new admin end user role
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.AdminEndUser));
-
-                    }
-
-
-                    //if the super admin end user does not exist
-                    if (!await _roleManager.RoleExistsAsync(StaticDetails.SuperAdminEndUser))
-                    {
-                        //create new super admin end user role
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.SuperAdminEndUser));
-
-                    }
-
                     //if the 'isSuperAdmin' check box is selected
                     if (Input.isSuperAdmin)
                     {
