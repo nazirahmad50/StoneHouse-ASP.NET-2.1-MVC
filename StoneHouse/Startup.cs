@@ -45,6 +45,9 @@ namespace StoneHouse
                 .AddDefaultTokenProviders()
                ;
 
+            //will add the 'DBInitializer' to services
+            services.AddScoped<IDbInitializer, DBInitializer>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSession(options =>
@@ -57,7 +60,7 @@ namespace StoneHouse
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -74,6 +77,8 @@ namespace StoneHouse
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            //this will be called when the applciation starst and makes sure that teh roles are created
+            dbInitializer.Initialize();
             app.UseAuthentication();
             app.UseSession();
 
